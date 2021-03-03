@@ -1,0 +1,76 @@
+{
+  "name": "Ruby Template",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "ruby_latest",
+  "workspaceFolder": "/app",
+  "shutdownAction": "stopCompose",
+  "settings": {
+    "terminal.integrated.shell.osx": "/bin/zsh",
+    // requires: 
+    // "mtxr.sqltools",
+    // "mtxr.sqltools-driver-pg",
+    // "sqltools.connections": [
+    //   {
+    //     "name": "Container database",
+    //     "driver": "PostgreSQL",
+    //     "previewLimit": 50,
+    //     "server": "localhost",
+    //     "port": 5432,
+    //     "database": "postgres",
+    //     "username": "postgres",
+    //     "password": "password"
+    //   }
+    // ],
+    "[ruby]": {
+      "editor.insertSpaces": true,
+      "editor.tabSize": 2
+    },
+    "editor.formatOnSave": false,
+    "editor.renderWhitespace": "all",
+    "solargraph.autoformat": false,
+    "solargraph.diagnostics": true,
+    "solargraph.formatting": false,
+    "editor.tabSize": 2,
+    "files.eol": "\n",
+    "files.trimTrailingWhitespace": true,
+    "files.trimFinalNewlines": true,
+    "solargraph.transport": "external",
+    "solargraph.externalServer": {
+      "host": "solargraph_for_ruby_latest",
+      "port": 7658
+    },
+  },
+  "extensions": [
+    "rebornix.Ruby",
+    "castwide.solargraph",
+    "aaron-bond.better-comments",
+    "mikestead.dotenv",
+    "gitlab.gitlab-workflow",
+    "ms-vscode.atom-keybindings",
+    "ms-vscode.azure-account",
+    "coenraads.bracket-pair-colorizer-2",
+    "andig.sublime-cmd-shift-d",
+    "ms-azuretools.vscode-docker",
+    "vincaslt.highlight-matching-tag",
+    "atlassian.atlascode",
+    "bung87.rails",
+    "bung87.vscode-gemfile",
+    "vayan.haml",
+    "sianglim.slim",
+    "wingrunr21.vscode-ruby",
+    "redhat.vscode-yaml",
+    "ratismal.erb-types",
+    "oderwat.indent-rainbow",
+    "humao.rest-client",
+    "pranaygp.vscode-css-peek",
+    "codezombiech.gitignore",
+    "dakara.transformer",
+    "dbaeumer.vscode-eslint",
+    "eamodio.gitlens",
+    "ormulahendry.auto-rename-tag",
+    "IBM.output-colorizer",
+    "kaiwood.endwise",
+    "vscode-icons-team.vscode-icons",
+    "wix.vscode-import-cost",
+  ]
+}

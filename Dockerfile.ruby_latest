@@ -1,0 +1,45 @@
+FROM ruby:latest
+
+ENV APP_HOME=/app
+ENV GEMS_HOME=/gems
+ENV ASSETS_HOME=/local_assets
+
+WORKDIR ${APP_HOME}
+
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive && apt-get install -y --no-install-recommends \
+  bash \
+  less  \
+  nodejs \
+  build-essential \
+  ruby-dev \
+  libc-dev  \
+  libffi-dev \
+  default-mysql-client \
+  postgresql-client \
+  default-libmysqlclient-dev \
+  libpq-dev \
+  libxml2-dev \ 
+  libxslt-dev \
+  tzdata \
+  git \
+  ssh \
+  wget \
+  file \
+  imagemagick \
+  && apt-get autoremove -y && apt-get clean -y && rm -rf /var/lib/apt/lists/*
+
+ENV BUNDLE_JOBS="$(getconf _NPROCESSORS_ONLN)"
+ENV BUNDLE_GEMFILE=$APP_HOME/Gemfile
+ENV BUNDLE_PATH=${GEMS_HOME}
+
+RUN mkdir -p $ASSETS_HOME
+RUN mkdir -p ${APP_HOME}/public/assets
+RUN ln -s ${ASSETS_HOME}} ${APP_HOME}/public/assets
+
+WORKDIR $APP_HOME
+
+COPY . .
+
+RUN gem install bundler --no-document
+
+ENTRYPOINT ["sh", "./.docker/docker-entrypoint.sh"]

@@ -1,0 +1,97 @@
+version: '3.9'
+services:
+  # databases
+  mysql:
+    container_name: rails_on_docker__mysql
+    image: mysql:latest
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+    # ports:
+    #   - 1000:3306
+    volumes:
+      - mysql-volume:/var/lib/mysql
+    healthcheck:
+      test: "/usr/bin/mysql --user=root --password=password --execute \"SHOW DATABASES;\""
+      interval: 2s
+      timeout: 20s
+      retries: 10
+    tmpfs:
+      - /tmp
+  postgres:
+    container_name: rails_on_docker__postgres
+    build:
+      context: .
+      dockerfile: Dockerfile.pg_with_postgis
+    restart: unless-stopped
+    # ports:
+      # - 1001:5432
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "user"]
+    volumes:
+      - rails_on_docker__postgres-volume:/var/lib/postgresql/data
+    tmpfs:
+      - /tmp
+  redis:
+    container_name: rails_on_docker__redis
+    image: redis:latest
+    # ports:
+      # - 1002:6379
+    volumes:
+      - rails_on_docker__redis:/var/lib/redis/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-h", "localhost", "ping"]
+  ruby_latest: &ruby_latest
+    container_name: rails_on_docker__ruby_latest # does it work at all??
+    stdin_open: true
+    tty: true
+    build:
+      context: .
+      dockerfile: Dockerfile.ruby_latest
+    volumes:
+      - ./:/app:cached
+      - ~/.ssh:/root/.ssh
+      - ruby_latest-gems:/gems
+    environment:
+      DOCKER_LOCAL: "yes"
+      MYSQL_DB_HOST: mysql
+      MYSQL_DB_USER: root
+      MYSQL_DB_PASSWORD: password
+      POSTGRESQL_DB_HOST: postgres
+      POSTGRESQL_DB_USER: user
+      POSTGRESQL_DB_PASSWORD: password
+      HISTFILE: /app/log/.bash_history
+      REDIS_URL: "redis://redis:6379/0"
+    depends_on:
+      - mysql
+      - postgres
+      - redis
+    tmpfs:
+      - /tmp
+    entrypoint: /bin/bash
+    # network_mode: service:postgres
+  solargraph_for_ruby_latest:
+    container_name: rails_on_docker__solargraph_for_ruby_latest
+    <<: *ruby_latest
+    ports:
+      - 7658:7658
+    command: "./bin/solargraph socket --host 0.0.0.0 --port=7658"
+    depends_on:
+      - ruby_latest
+    restart: always
+#   # servers
+  # ruby_latest-server:
+  #   container_name: rails_on_docker__ruby_latest-server
+  #   <<: *ruby_latest
+  #   entrypoint: ".docker/docker-entrypoint.sh"
+  #   command: bundle exec rails server -b 0.0.0.0
+  #   ports:
+  #     - 3000:3000
+volumes:
+  mysql-volume:
+  rails_on_docker__postgres-volume:
+  rails_on_docker__redis:
+  ruby_latest-gems:
